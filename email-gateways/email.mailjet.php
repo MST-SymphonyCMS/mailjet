@@ -8,11 +8,9 @@ require_once EXTENSIONS . '/mailjet/vendor/autoload.php';
 use \Mailjet\Resources;
 
 /**
- * One of the two core email gateways.
- * Provides simple SMTP functionalities.
- * Supports AUTH LOGIN, SSL and TLS.
+ * An additional gateway to support Mailjet
  *
- * @author Huib Keemink, Michael Eichelsdoerfer
+ * @author Jon Mifsud
  */
 class MailjetGateway extends EmailGateway
 {
@@ -81,9 +79,9 @@ class MailjetGateway extends EmailGateway
             // 'FromEmail' => $this->_reply_to_email_address,
             'FromEmail' => $this->_sender_email_address,
             'FromName' => $this->_sender_name,
-            'Subject' => $this->_subject,
+            'Subject' => html_entity_decode($this->_subject),
             'Text-part' => $this->_text_plain,
-            'Html-part' => $this->_text_html,
+            'Html-part' => html_entity_decode($this->_text_html),
             'Recipients' => $recipients,
             'Headers' => []
         ];
@@ -107,7 +105,7 @@ class MailjetGateway extends EmailGateway
         if (empty($body["Headers"])){
             unset($body["Headers"]);
         } else {
-            $body["Headers"] = json_encode($body["Headers"]);
+            // $body["Headers"] = json_encode($body["Headers"]);
         }
 
 
@@ -124,7 +122,6 @@ class MailjetGateway extends EmailGateway
 
                 // $response = $driver->getLists();
                 $response = $driver->send(['body' => $body]);
-                // var_dump($response->success());die;
 
                 $this->reset();
             }
